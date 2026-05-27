@@ -1,0 +1,27 @@
+{
+  "name": "lab_inventory_system",
+  "version": "1.0.0",
+  "description": "Capstone Project 2 Lab Inventory System",
+  "keywords": [
+    "Node"
+  ],
+  "license": "ISC",
+  "author": "2172007 2172013 2172040",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "multer": "^2.1.1",
+    "mysql2": "^3.22.3",
+    "pug": "^3.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
