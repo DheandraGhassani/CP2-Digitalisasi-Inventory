@@ -86,6 +86,7 @@ CREATE TABLE IF NOT EXISTS `bhp_stocks` (
   `updated_at`    TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `rooms_id`      INT UNSIGNED   NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_bhp_stock_product_room` (`product_name`, `rooms_id`),
   KEY `fk_bhp_stocks_rooms1_idx` (`rooms_id`),
   CONSTRAINT `fk_bhp_stocks_rooms1`
     FOREIGN KEY (`rooms_id`) REFERENCES `rooms` (`id`)
@@ -107,6 +108,7 @@ CREATE TABLE IF NOT EXISTS `procurement_drafts` (
   `updated_at`  TIMESTAMP                                             NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `users_id`    INT UNSIGNED                                          NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_draft_year_user` (`year`, `users_id`),
   KEY `fk_procurement_drafts_users1_idx` (`users_id`),
   KEY `fk_procurement_drafts_reviewed_by_idx` (`reviewed_by`),
   CONSTRAINT `fk_procurement_drafts_users1`
@@ -157,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `procurement_items` (
 CREATE TABLE IF NOT EXISTS `inventory_assets` (
   `id`                   INT UNSIGNED                                                    NOT NULL AUTO_INCREMENT,
   `product_name`         VARCHAR(150)                                                    NOT NULL,
-  `label_code`           VARCHAR(50)                                                     NOT NULL,
+  `label_code`           VARCHAR(50)                                                     NULL,
   `qr_code_path`         VARCHAR(255)                                                    NULL,
   `condition`            ENUM('good','minor_damage','major_damage','removed','replaced') NOT NULL DEFAULT 'good',
   `date_acquired`        DATE                                                            NULL,

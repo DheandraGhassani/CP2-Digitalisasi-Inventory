@@ -20,7 +20,7 @@ const showLogin = (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password, returnTo = '/' } = req.body;
-        
+
         // Validate input
         if (!email || !password) {
             return res.render('auth/login', {
@@ -30,10 +30,10 @@ const login = async (req, res) => {
                 returnTo
             });
         }
-        
+
         // Find user by email
         const user = await User.findByEmail(email);
-        
+
         if (!user) {
             return res.render('auth/login', {
                 title: 'Login',
@@ -42,7 +42,7 @@ const login = async (req, res) => {
                 returnTo
             });
         }
-        
+
         // Check if user is active
         if (!user.is_active) {
             return res.render('auth/login', {
@@ -52,10 +52,10 @@ const login = async (req, res) => {
                 returnTo
             });
         }
-        
+
         // Verify password
         const isValidPassword = await User.verifyPassword(password, user.password);
-        
+
         if (!isValidPassword) {
             return res.render('auth/login', {
                 title: 'Login',
@@ -64,7 +64,7 @@ const login = async (req, res) => {
                 returnTo
             });
         }
-        
+
         // Create session
         req.session.user = {
             id: user.id,
@@ -75,13 +75,13 @@ const login = async (req, res) => {
             role_name: user.role_name,
             profile_photo: user.profile_photo
         };
-        
+
         // Clear returnTo after successful login
         const redirectUrl = returnTo === '/' ? '/auth/dashboard' : returnTo;
         delete req.session.returnTo;
-        
+
         res.redirect(redirectUrl);
-        
+
     } catch (error) {
         console.error('Login error:', error);
         res.render('auth/login', {
@@ -108,7 +108,7 @@ const dashboard = (req, res) => {
     if (!req.session.user) {
         return res.redirect('/auth/login');
     }
-    
+
     const roleDashboards = {
         'admin': '/auth/dashboard/admin',
         'kalab': '/auth/dashboard/kepala-lab',
@@ -125,7 +125,7 @@ const dashboard = (req, res) => {
 const adminDashboard = async (req, res) => {
     try {
         const db = require('../config/database');
-        
+
         // Get statistics
         const stats = await db.query(`
             SELECT 
@@ -136,7 +136,7 @@ const adminDashboard = async (req, res) => {
                 (SELECT COUNT(*) FROM procurement_drafts) as total_drafts,
                 (SELECT COUNT(*) FROM maintenance_logs) as total_maintenance
         `);
-        
+
         res.render('dashboard/admin', {
             title: 'Admin Dashboard',
             user: req.session.user,
@@ -154,14 +154,14 @@ const adminDashboard = async (req, res) => {
 const kepalaLabDashboard = async (req, res) => {
     try {
         const db = require('../config/database');
-        
+
         const stats = await db.query(`
             SELECT 
-                (SELECT COUNT(*) FROM procurement_drafts WHERE created_by = ? AND status != 'finalized') as pending_drafts,
-                (SELECT COUNT(*) FROM procurement_drafts WHERE created_by = ? AND status = 'finalized') as finalized_drafts,
+                (SELECT COUNT(*) FROM procurement_drafts WHERE users_id = ? AND status != 'finalized') as pending_drafts,
+                (SELECT COUNT(*) FROM procurement_drafts WHERE users_id = ? AND status = 'finalized') as finalized_drafts,
                 (SELECT COUNT(*) FROM inventory_assets WHERE date_acquired >= DATE_SUB(NOW(), INTERVAL 30 DAY)) as new_assets
         `, [req.session.user.id, req.session.user.id]);
-        
+
         res.render('dashboard/kepala-lab', {
             title: 'Kepala Laboratorium Dashboard',
             user: req.session.user,
@@ -179,14 +179,14 @@ const kepalaLabDashboard = async (req, res) => {
 const kaprodiDashboard = async (req, res) => {
     try {
         const db = require('../config/database');
-        
+
         const stats = await db.query(`
             SELECT 
                 (SELECT COUNT(*) FROM procurement_drafts WHERE status = 'locked') as pending_review,
                 (SELECT COUNT(*) FROM procurement_drafts WHERE status = 'reviewed') as reviewed,
                 (SELECT COUNT(*) FROM procurement_drafts WHERE status = 'finalized') as finalized
         `);
-        
+
         res.render('dashboard/kaprodi', {
             title: 'Ketua Program Studi Dashboard',
             user: req.session.user,
@@ -204,14 +204,14 @@ const kaprodiDashboard = async (req, res) => {
 const stafAdminDashboard = async (req, res) => {
     try {
         const db = require('../config/database');
-        
+
         const stats = await db.query(`
             SELECT 
                 (SELECT COUNT(*) FROM procurement_items WHERE approval_status = 'approved' AND id NOT IN (SELECT procurement_items_id FROM receipt)) as pending_receipt,
                 (SELECT COUNT(*) FROM inventory_assets WHERE label_code IS NULL) as pending_labeling,
                 (SELECT COUNT(*) FROM receipt WHERE receipt_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)) as recent_receipts
         `);
-        
+
         res.render('dashboard/staf-admin', {
             title: 'Staf Administrasi Dashboard',
             user: req.session.user,
@@ -229,14 +229,14 @@ const stafAdminDashboard = async (req, res) => {
 const stafLabDashboard = async (req, res) => {
     try {
         const db = require('../config/database');
-        
+
         const stats = await db.query(`
             SELECT 
                 (SELECT COUNT(*) FROM bhp_stocks WHERE current_stock <= minimum_stock) as low_stock,
-                (SELECT COUNT(*) FROM maintenance_logs WHERE status = 'in_progress') as ongoing_maintenance,
-                (SELECT COUNT(*) FROM inventory_assets WHERE condition != 'baik') as damaged_assets
+                (SELECT COUNT(*) FROM maintenance_logs WHERE maintenance_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)) as recent_maintenance,
+                (SELECT COUNT(*) FROM inventory_assets WHERE \`condition\` != 'good') as damaged_assets
         `);
-        
+
         res.render('dashboard/staf-lab', {
             title: 'Staf Laboratorium Dashboard',
             user: req.session.user,

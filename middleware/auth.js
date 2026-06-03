@@ -14,12 +14,12 @@ const hasRole = (...allowedRoles) => {
             req.session.returnTo = req.originalUrl;
             return res.redirect('/auth/login');
         }
-        
-        const userRole = req.session.user.role;
+
+        const userRole = req.session.user.role_name;
         if (allowedRoles.includes(userRole)) {
             return next();
         }
-        
+
         res.status(403).render('error', {
             title: '403 - Access Denied',
             message: 'You do not have permission to access this page.',
@@ -35,21 +35,21 @@ const hasPermission = (permission) => {
             req.session.returnTo = req.originalUrl;
             return res.redirect('/auth/login');
         }
-        
-        const userRole = req.session.user.role;
+
+        const userRole = req.session.user.role_name;
         const permissions = {
             'admin': ['*'],
-            'kepala_lab': ['create_draft', 'view_draft', 'edit_draft', 'lock_draft'],
+            'kalab': ['create_draft', 'view_draft', 'edit_draft', 'lock_draft'],
             'kaprodi': ['review_draft', 'finalize_draft', 'view_draft'],
-            'staf_admin': ['view_draft', 'update_asset', 'input_receipt', 'generate_qr'],
-            'staf_lab': ['manage_bhp', 'create_maintenance', 'update_condition']
+            'staff_admin': ['view_draft', 'update_asset', 'input_receipt', 'generate_qr'],
+            'staff_lab': ['manage_bhp', 'create_maintenance', 'update_condition']
         };
-        
+
         const userPermissions = permissions[userRole] || [];
         if (userPermissions.includes('*') || userPermissions.includes(permission)) {
             return next();
         }
-        
+
         res.status(403).render('error', {
             title: '403 - Access Denied',
             message: 'You do not have permission to perform this action.'
