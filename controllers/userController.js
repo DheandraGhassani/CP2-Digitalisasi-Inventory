@@ -8,10 +8,10 @@ const listUsers = async (req, res) => {
         const limit = 10;
         const offset = (page - 1) * limit;
         const role = req.query.role || null;
-        
+
         const result = await User.getAll(limit, offset, role);
         const roles = await Role.getAll();
-        
+
         res.render('users/list', {
             title: 'Manage Users',
             users: result.users,
@@ -20,6 +20,7 @@ const listUsers = async (req, res) => {
             totalPages: Math.ceil(result.total / limit),
             role,
             roles,
+            success: req.query.success || null,
             user: req.session.user
         });
     } catch (error) {
@@ -37,9 +38,10 @@ const showCreateForm = async (req, res) => {
         const roles = await Role.getAll();
         res.render('users/form', {
             title: 'Create New User',
-            user: null,
+            editUser: null,
             roles,
-            errors: null
+            errors: null,
+            user: req.session.user
         });
     } catch (error) {
         console.error('Error showing create form:', error);
@@ -54,19 +56,21 @@ const showCreateForm = async (req, res) => {
 const createUser = async (req, res) => {
     try {
         const { name, email, password, role, roles_id } = req.body;
-        
+
         // Check if email exists
         const existingUser = await User.findByEmail(email);
         if (existingUser) {
             const roles = await Role.getAll();
             return res.render('users/form', {
                 title: 'Create New User',
-                user: null,
+                editUser: null,
                 roles,
-                errors: { email: 'Email already exists' }
+                errors: { email: 'Email already exists' },
+                values: req.body,
+                user: req.session.user
             });
         }
-        
+
         await User.create({ name, email, password, role, roles_id });
         res.redirect('/users?success=User created successfully');
     } catch (error) {
@@ -88,13 +92,14 @@ const showEditForm = async (req, res) => {
                 message: 'User not found'
             });
         }
-        
+
         const roles = await Role.getAll();
         res.render('users/form', {
             title: 'Edit User',
-            user,
+            editUser: user,
             roles,
-            errors: null
+            errors: null,
+            user: req.session.user
         });
     } catch (error) {
         console.error('Error showing edit form:', error);

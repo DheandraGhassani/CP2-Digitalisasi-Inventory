@@ -1,0 +1,43 @@
+extends ../layout
+
+block content
+  .d-flex.justify-content-between.align-items-center.mb-3
+    h2.mb-0 Kelola Pengguna
+    a.btn.btn-primary(href="/users/create") + Tambah Pengguna
+  if success
+    .alert.alert-success= success
+  .card
+    .card-body.p-0
+      table.table.table-hover.mb-0
+        thead.table-light
+          tr
+            th Nama
+            th Email
+            th Role
+            th Status
+            th.text-end Aksi
+        tbody
+          if users && users.length
+            each u in users
+              tr
+                td= u.name
+                td= u.email
+                td
+                  span.badge.bg-secondary= u.role_name
+                td
+                  if u.is_active
+                    span.badge.bg-success Aktif
+                  else
+                    span.badge.bg-danger Nonaktif
+                td.text-end
+                  a.btn.btn-sm.btn-outline-primary.me-1(href=`/users/${u.id}/edit`) Edit
+                  a.btn.btn-sm.btn-outline-danger(href=`/users/${u.id}/delete`, onclick="return confirm('Hapus pengguna ini?')") Hapus
+          else
+            tr
+              td.text-center.text-muted(colspan="5") Belum ada pengguna.
+  if totalPages && totalPages > 1
+    nav.mt-3
+      ul.pagination
+        - for (var p = 1; p <= totalPages; p++)
+          li.page-item(class=(p === currentPage ? 'active' : ''))
+            a.page-link(href=`/users?page=${p}` + (role ? `&role=${role}` : ''))= p

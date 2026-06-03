@@ -7,6 +7,7 @@ const listRooms = async (req, res) => {
         res.render('rooms/list', {
             title: 'Manage Rooms',
             rooms,
+            success: req.query.success || null,
             user: req.session.user
         });
     } catch (error) {
@@ -31,7 +32,7 @@ const showCreateForm = (req, res) => {
 const createRoom = async (req, res) => {
     try {
         const { room_code, room_name, capacity, description } = req.body;
-        
+
         // Check if room code exists
         const existingRoom = await Room.findByCode(room_code);
         if (existingRoom) {
@@ -41,15 +42,15 @@ const createRoom = async (req, res) => {
                 errors: { room_code: 'Room code already exists' }
             });
         }
-        
+
         await Room.create({
             room_code,
             room_name,
-            capacity,
-            description,
+            capacity: capacity || null,
+            description: description || null,
             created_by: req.session.user.id
         });
-        
+
         res.redirect('/rooms?success=Room created successfully');
     } catch (error) {
         console.error('Error creating room:', error);
@@ -70,7 +71,7 @@ const showEditForm = async (req, res) => {
                 message: 'Room not found'
             });
         }
-        
+
         res.render('rooms/form', {
             title: 'Edit Room',
             room,
@@ -92,11 +93,11 @@ const updateRoom = async (req, res) => {
         await Room.update(req.params.id, {
             room_code,
             room_name,
-            capacity,
-            description,
+            capacity: capacity || null,
+            description: description || null,
             updated_by: req.session.user.id
         });
-        
+
         res.redirect('/rooms?success=Room updated successfully');
     } catch (error) {
         console.error('Error updating room:', error);

@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+  .d-flex.justify-content-between.align-items-center.mb-3
+    h2.mb-0 Kelola Ruangan
+    a.btn.btn-primary(href="/rooms/create") + Tambah Ruangan
+  if success
+    .alert.alert-success= success
+  .card
+    .card-body.p-0
+      table.table.table-hover.mb-0
+        thead.table-light
+          tr
+            th Kode
+            th Nama Ruangan
+            th Kapasitas
+            th Deskripsi
+            th.text-end Aksi
+        tbody
+          if rooms && rooms.length
+            each r in rooms
+              tr
+                td
+                  span.badge.bg-secondary= r.room_code
+                td= r.room_name
+                td= (r.capacity != null) ? r.capacity : '-'
+                td= r.description || '-'
+                td.text-end
+                  a.btn.btn-sm.btn-outline-primary.me-1(href=`/rooms/${r.id}/edit`) Edit
+                  a.btn.btn-sm.btn-outline-danger(href=`/rooms/${r.id}/delete`, onclick="return confirm('Hapus ruangan ini?')") Hapus
+          else
+            tr
+              td.text-center.text-muted(colspan="5") Belum ada ruangan.

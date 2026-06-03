@@ -22,6 +22,14 @@
   --bs-body-font-family: "Poppins", system-ui, sans-serif;
   --bs-body-color: #666;
   --bs-body-font-size: 15px;
+
+  /* Rounded shapes (global radius scale) */
+  --bs-border-radius: 0.6rem;
+  --bs-border-radius-sm: 0.45rem;
+  --bs-border-radius-lg: 0.9rem;
+  --bs-border-radius-xl: 1.1rem;
+  --bs-border-radius-2xl: 1.5rem;
+  --bs-border-radius-pill: 50rem;
 }
 
 body {
@@ -68,7 +76,11 @@ a:hover {
 /* Andromeda-style primary button: orange, rounded 6px, weight 500 */
 .btn {
   font-weight: 500;
+  border-radius: 9px;
   transition: all 0.25s ease;
+}
+.btn-sm {
+  border-radius: 7px;
 }
 .btn-primary {
   --bs-btn-bg: #fe6019;
@@ -81,7 +93,7 @@ a:hover {
   --bs-btn-hover-color: #fff;
   --bs-btn-active-color: #fff;
   --bs-btn-focus-shadow-rgb: var(--brand-primary-rgb);
-  border-radius: 6px;
+  border-radius: 9px;
   padding: 0.6rem 1.25rem;
 }
 .btn-outline-primary {
@@ -92,13 +104,47 @@ a:hover {
   --bs-btn-hover-color: #fff;
   --bs-btn-active-bg: #fe6019;
   --bs-btn-active-border-color: #fe6019;
-  border-radius: 6px;
+  border-radius: 9px;
 }
 
-/* Cards: soft cream border, rounded */
+/* Cards: soft cream border, generously rounded; clip so inner tables round too */
 .card {
   border-color: var(--brand-border-soft);
-  border-radius: 10px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Rounded shapes everywhere else */
+.form-control,
+.form-select,
+.input-group-text {
+  border-radius: 9px;
+}
+.badge {
+  border-radius: 7px;
+  padding: 0.4em 0.7em;
+}
+.alert {
+  border-radius: 12px;
+}
+.dropdown-menu,
+.modal-content,
+.list-group {
+  border-radius: 14px;
+}
+.modal-content {
+  overflow: hidden;
+}
+.pagination {
+  gap: 0.3rem;
+}
+.page-link {
+  border-radius: 9px !important;
+  border: 0;
+}
+.nav-pills .nav-link,
+.nav-link {
+  border-radius: 8px;
 }
 
 /* Branded navbar (dark with orange brand) */

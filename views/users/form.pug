@@ -1,0 +1,32 @@
+extends ../layout
+
+block content
+  - var v = editUser || (typeof values !== 'undefined' && values) || {}
+  - var isEdit = !!editUser
+  .d-flex.justify-content-between.align-items-center.mb-3
+    h2.mb-0= isEdit ? 'Edit Pengguna' : 'Tambah Pengguna'
+    a.btn.btn-outline-secondary(href="/users") Kembali
+  .card
+    .card-body
+      form(method="POST", action=isEdit ? `/users/${editUser.id}/edit` : '/users/create')
+        .mb-3
+          label.form-label(for="name") Nama
+          input.form-control#name(type="text" name="name", value=v.name || '', required)
+        .mb-3
+          label.form-label(for="email") Email
+          input.form-control#email(type="email" name="email", value=v.email || '', class=(errors && errors.email ? 'is-invalid' : ''), required)
+          if errors && errors.email
+            .invalid-feedback= errors.email
+        if !isEdit
+          .mb-3
+            label.form-label(for="password") Password
+            input.form-control#password(type="password" name="password", required)
+        .mb-3
+          label.form-label(for="roles_id") Role
+          select.form-select#roles_id(name="roles_id", required)
+            option(value="", disabled, selected=!v.roles_id) -- pilih role --
+            each r in roles
+              option(value=r.id, selected=(String(v.roles_id) === String(r.id)))= r.role_name
+        .d-flex.gap-2
+          button.btn.btn-primary(type="submit")= isEdit ? 'Simpan' : 'Buat'
+          a.btn.btn-light(href="/users") Batal

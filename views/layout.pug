@@ -11,7 +11,7 @@ html(lang="id")
       nav.navbar.navbar-expand.navbar-dark.bg-dark
         .container
           a.navbar-brand(href="/auth/dashboard") Lab Inventory
-          ul.navbar-nav.me-auto
+          ul.navbar-nav.me-auto.align-items-center
             li.nav-item
               a.nav-link(href="/auth/dashboard") Dashboard
             if user.role_name === 'admin'
@@ -33,10 +33,10 @@ html(lang="id")
                 a.nav-link(href="/bhp") Stok BHP
               li.nav-item
                 a.nav-link(href="/maintenance") Maintenance
-          ul.navbar-nav.ms-auto
+          ul.navbar-nav.ms-auto.align-items-center
             li.nav-item
               span.navbar-text.text-light.me-3 #{user.name} (#{user.role_name})
             li.nav-item
-              a.btn.btn-sm.btn-outline-light(href="/auth/logout") Logout
+              a.btn.btn-sm.btn-outline-light(href="/auth/logout", onclick="return confirm('Yakin ingin logout?')") Logout
     main.container.py-4
       block content

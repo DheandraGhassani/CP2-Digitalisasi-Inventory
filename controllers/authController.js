@@ -76,6 +76,13 @@ const login = async (req, res) => {
             profile_photo: user.profile_photo
         };
 
+        // Remember me: extend cookie to 30 days; otherwise session-only (expires on browser close)
+        if (req.body.remember) {
+            req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
+        } else {
+            req.session.cookie.expires = false;
+        }
+
         // Clear returnTo after successful login
         const redirectUrl = returnTo === '/' ? '/auth/dashboard' : returnTo;
         delete req.session.returnTo;
