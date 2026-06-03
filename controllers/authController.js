@@ -4,9 +4,9 @@ const Role = require('../models/Role');
 // Show login page
 const showLogin = (req, res) => {
     if (req.session.user) {
-        return res.redirect('/dashboard');
+        return res.redirect('/auth/dashboard');
     }
-    
+
     const returnTo = req.session.returnTo || '/';
     res.render('auth/login', {
         title: 'Login',
@@ -77,7 +77,7 @@ const login = async (req, res) => {
         };
         
         // Clear returnTo after successful login
-        const redirectUrl = returnTo === '/' ? '/dashboard' : returnTo;
+        const redirectUrl = returnTo === '/' ? '/auth/dashboard' : returnTo;
         delete req.session.returnTo;
         
         res.redirect(redirectUrl);
@@ -110,14 +110,14 @@ const dashboard = (req, res) => {
     }
     
     const roleDashboards = {
-        'admin': '/dashboard/admin',
-        'kepala_lab': '/dashboard/kepala-lab',
-        'kaprodi': '/dashboard/kaprodi',
-        'staf_admin': '/dashboard/staf-admin',
-        'staf_lab': '/dashboard/staf-lab'
+        'admin': '/auth/dashboard/admin',
+        'kalab': '/auth/dashboard/kepala-lab',
+        'kaprodi': '/auth/dashboard/kaprodi',
+        'staff_admin': '/auth/dashboard/staf-admin',
+        'staff_lab': '/auth/dashboard/staf-lab'
     };
-    
-    const redirectPath = roleDashboards[req.session.user.role] || '/dashboard/default';
+
+    const redirectPath = roleDashboards[req.session.user.role_name] || '/auth/dashboard/default';
     res.redirect(redirectPath);
 };
 

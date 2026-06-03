@@ -1,0 +1,11 @@
+extends ../layout
+
+block content
+  h2.mb-4= title || 'Admin Dashboard'
+  .row.g-3
+    each label, key in {total_users:'Users', total_rooms:'Rooms', total_bhp:'BHP Stocks', total_assets:'Assets', total_drafts:'Procurement Drafts', total_maintenance:'Maintenance Logs'}
+      .col-md-4
+        .card.shadow-sm
+          .card-body
+            h6.text-muted.mb-1= label
+            h3.mb-0= (stats && stats[key] != null) ? stats[key] : 0

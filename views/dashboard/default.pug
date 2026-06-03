@@ -1,0 +1,7 @@
+extends ../layout
+
+block content
+  h2.mb-3= title || 'Dashboard'
+  p Selamat datang, #{user.name}.
+  p.text-muted Role: #{user.role_name || 'unknown'}
+  .alert.alert-info Dashboard fitur per-role masih dalam pengembangan.

@@ -42,46 +42,25 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const roomRoutes = require('./routes/roomRoutes');
 const roleRoutes = require('./routes/roleRoutes');
-const procurementRoutes = require('./routes/procurementRoutes');
-const assetRoutes = require('./routes/assetRoutes');
-const bhpRoutes = require('./routes/bhpRoutes');
-const maintenanceRoutes = require('./routes/maintenanceRoutes');
 
 // Use routes
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/rooms', roomRoutes);
 app.use('/roles', roleRoutes);
-app.use('/procurement', procurementRoutes);
-app.use('/assets', assetRoutes);
-app.use('/bhp', bhpRoutes);
-app.use('/maintenance', maintenanceRoutes);
 
 // Home route
 app.get('/', (req, res) => {
     if(req.session.user) {
-        return res.redirect('/dashboard');
+        return res.redirect('/auth/dashboard');
     } else {
         res.render('auth/login');
     }
 });
 
-// Dashboard route
+// Dashboard dispatch (delegates to role-based handler under /auth)
 app.get('/dashboard', (req, res) => {
-    if(!req.session.user) {
-        return res.redirect('/auth/login');
-    }
-
-    const roleDashboard = {
-        'admin': '/dashboard/admin',
-        'kepala_lab': '/dashboard/kepala-lab',
-        'kaprodi': '/dashboard/kaprodi',
-        'staf_admin': '/dashboard/staf-admin',
-        'staf_lab': '/dashboard/staf-lab',
-    };
-
-    const redirectPath = roleDashboard[req.session.user.role] || '/dashboard/default';
-    res.redirect(redirectPath);
+    res.redirect('/auth/dashboard');
 });
 
 // Error handling
@@ -100,7 +79,4 @@ app.use((err, req, res, next) => {
     });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`✅ Server is running at http://localhost:${PORT}`);
-});
+module.exports = app;

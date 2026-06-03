@@ -1,0 +1,117 @@
+/* Andromeda-inspired theme for Lab Inventory (Pug + Bootstrap 5.3)
+   Ported design tokens: primary #fe6019, Poppins, button + card styling. */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+:root {
+  --brand-primary: #fe6019;
+  --brand-primary-rgb: 254, 96, 25;
+  --brand-primary-hover: #e9530f;
+  --brand-primary-active: #d24a0d;
+  --brand-dark: #1a202c;
+  --brand-light: #fffaf3;
+  --brand-border: #dee2e6;
+  --brand-border-soft: #ffece4;
+  --brand-text: #666;
+
+  /* Override Bootstrap theme */
+  --bs-primary: #fe6019;
+  --bs-primary-rgb: 254, 96, 25;
+  --bs-link-color: #fe6019;
+  --bs-link-color-rgb: 254, 96, 25;
+  --bs-link-hover-color: #e0500f;
+  --bs-body-font-family: "Poppins", system-ui, sans-serif;
+  --bs-body-color: #666;
+  --bs-body-font-size: 15px;
+}
+
+body {
+  font-family: "Poppins", system-ui, sans-serif;
+  color: var(--brand-text);
+  background-color: #ffffff;
+}
+
+/* Login / auth pages use the soft cream background */
+body.bg-light {
+  background-color: var(--brand-light) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-family: "Poppins", system-ui, sans-serif;
+  font-weight: 600;
+  color: #222;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--brand-primary-hover);
+}
+
+.text-primary {
+  color: var(--brand-primary) !important;
+}
+
+/* Andromeda-style primary button: orange, rounded 6px, weight 500 */
+.btn {
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+.btn-primary {
+  --bs-btn-bg: #fe6019;
+  --bs-btn-border-color: #fe6019;
+  --bs-btn-hover-bg: #e9530f;
+  --bs-btn-hover-border-color: #e9530f;
+  --bs-btn-active-bg: #d24a0d;
+  --bs-btn-active-border-color: #d24a0d;
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+  --bs-btn-focus-shadow-rgb: var(--brand-primary-rgb);
+  border-radius: 6px;
+  padding: 0.6rem 1.25rem;
+}
+.btn-outline-primary {
+  --bs-btn-color: #fe6019;
+  --bs-btn-border-color: #fe6019;
+  --bs-btn-hover-bg: #fe6019;
+  --bs-btn-hover-border-color: #fe6019;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: #fe6019;
+  --bs-btn-active-border-color: #fe6019;
+  border-radius: 6px;
+}
+
+/* Cards: soft cream border, rounded */
+.card {
+  border-color: var(--brand-border-soft);
+  border-radius: 10px;
+}
+
+/* Branded navbar (dark with orange brand) */
+.navbar.bg-dark {
+  background-color: var(--brand-dark) !important;
+}
+.navbar-brand {
+  color: var(--brand-primary) !important;
+  font-weight: 600;
+}
+
+/* Form focus uses brand color */
+.form-control:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 0.2rem rgba(var(--brand-primary-rgb), 0.2);
+}

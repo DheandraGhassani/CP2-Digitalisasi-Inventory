@@ -33,8 +33,8 @@ module.exports = {
     pool,
     testConnection,
     query: async (sql, params) => {
-        const connection = await pool.getConnection();
-        return row;
+        const [rows] = await pool.query(sql, params);
+        return rows;
     },
     getConnection: async () => {
         return await pool.getConnection();

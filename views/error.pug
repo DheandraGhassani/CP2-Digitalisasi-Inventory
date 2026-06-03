@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  .text-center.py-5
+    h1.display-6= title || 'Error'
+    p.text-muted= message || 'Something went wrong.'
+    a.btn.btn-primary(href=backUrl || '/') Back
