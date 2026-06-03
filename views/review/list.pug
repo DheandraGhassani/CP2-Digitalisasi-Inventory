@@ -1,0 +1,41 @@
+extends ../layout
+
+block content
+  mixin statusBadge(s)
+    - var map = { draft: 'secondary', locked: 'warning', reviewed: 'info', finalized: 'success' }
+    span.badge(class='bg-' + (map[s] || 'secondary'))= s
+
+  h2.mb-3 Review Pengadaan
+  if success
+    .alert.alert-success= success
+  .card
+    .card-body.p-0
+      table.table.table-hover.align-middle.mb-0
+        thead.table-light
+          tr
+            th Tahun
+            th Pengaju
+            th Status
+            th Item
+            th Belum Diputus
+            th.text-end Estimasi
+            th.text-end Aksi
+        tbody
+          if drafts && drafts.length
+            each d in drafts
+              tr
+                td= d.year
+                td= d.creator_name
+                td: +statusBadge(d.status)
+                td= d.item_count
+                td
+                  if d.pending_count > 0
+                    span.badge.bg-warning= d.pending_count
+                  else
+                    span.badge.bg-success 0
+                td.text-end Rp #{Number(d.total_cost || 0).toLocaleString('id-ID')}
+                td.text-end
+                  a.btn.btn-sm.btn-outline-primary(href=`/review/${d.id}`)= d.status === 'finalized' ? 'Lihat' : 'Review'
+          else
+            tr
+              td.text-center.text-muted(colspan="7") Belum ada draf yang diajukan.

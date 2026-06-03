@@ -1,0 +1,74 @@
+extends ../layout
+
+block content
+  mixin statusBadge(s)
+    - var map = { draft: 'secondary', locked: 'warning', reviewed: 'info', finalized: 'success' }
+    span.badge(class='bg-' + (map[s] || 'secondary'))= s
+
+  - var total = (items || []).reduce(function(sum, i){ return sum + Number(i.price) * Number(i.quantity); }, 0)
+
+  .d-flex.justify-content-between.align-items-center.mb-3
+    div
+      h2.mb-1 Draf Pengadaan #{draft.year}
+      div Status: +statusBadge(draft.status)
+    a.btn.btn-outline-secondary(href="/procurement") Kembali
+  if success
+    .alert.alert-success= success
+
+  if !editable
+    .alert.alert-info Draf sudah <strong>#{draft.status}</strong> — tidak dapat diubah lagi.
+
+  .card.mb-3
+    .card-header.d-flex.justify-content-between.align-items-center
+      span Daftar Item
+      if editable
+        a.btn.btn-sm.btn-primary(href=`/procurement/${draft.id}/items/new`) + Tambah Item
+    .card-body.p-0
+      table.table.table-hover.align-middle.mb-0
+        thead.table-light
+          tr
+            th Tipe
+            th Nama Barang
+            th.text-end Harga
+            th.text-end Qty
+            th.text-end Subtotal
+            th Link
+            th Mengganti
+            if editable
+              th.text-end Aksi
+        tbody
+          if items && items.length
+            each i in items
+              tr
+                td
+                  span.badge(class=(i.product_type === 'bhp' ? 'bg-info' : 'bg-primary'))= i.product_type
+                td= i.product_name
+                td.text-end Rp #{Number(i.price).toLocaleString('id-ID')}
+                td.text-end= i.quantity
+                td.text-end Rp #{(Number(i.price) * Number(i.quantity)).toLocaleString('id-ID')}
+                td
+                  if i.purchase_link
+                    a(href=i.purchase_link, target="_blank" rel="noopener") link
+                  else
+                    span.text-muted -
+                td= i.replaced_label ? `${i.replaced_label} (${i.replaced_name})` : '-'
+                if editable
+                  td.text-end.text-nowrap
+                    a.btn.btn-sm.btn-outline-primary.me-1(href=`/procurement/${draft.id}/items/${i.id}/edit`) Edit
+                    a.btn.btn-sm.btn-outline-danger(href=`/procurement/${draft.id}/items/${i.id}/delete`, onclick="return confirm('Hapus item ini?')") Hapus
+          else
+            tr
+              td.text-center.text-muted(colspan=(editable ? 8 : 7)) Belum ada item.
+        tfoot.table-light
+          tr
+            th(colspan="4") Total Estimasi
+            th.text-end Rp #{total.toLocaleString('id-ID')}
+            th(colspan=(editable ? 3 : 2))
+
+  if editable
+    .d-flex.gap-2
+      form(method="POST", action=`/procurement/${draft.id}/lock`, onsubmit="return confirm('Kunci draf? Setelah dikunci tidak bisa diubah dan dikirim ke kaprodi.')")
+        button.btn.btn-warning(type="submit", disabled=!(items && items.length)) Kunci & Kirim ke Kaprodi
+      a.btn.btn-outline-danger(href=`/procurement/${draft.id}/delete`, onclick="return confirm('Hapus draf ini beserta semua itemnya?')") Hapus Draf
+    if !(items && items.length)
+      .form-text.mt-1 Tambah minimal 1 item sebelum mengunci.

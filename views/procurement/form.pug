@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+  .d-flex.justify-content-between.align-items-center.mb-3
+    h2.mb-0 Buat Draf Pengadaan
+    a.btn.btn-outline-secondary(href="/procurement") Kembali
+  .card
+    .card-body
+      form(method="POST" action="/procurement/create")
+        .mb-3
+          label.form-label(for="year") Tahun Pengadaan
+          input.form-control#year(type="number" name="year" min="2000" max="2100", value=(new Date()).getFullYear(), class=(errors && errors.year ? 'is-invalid' : ''), required)
+          if errors && errors.year
+            .invalid-feedback= errors.year
+          .form-text Item barang ditambahkan setelah draf dibuat.
+        .d-flex.gap-2
+          button.btn.btn-primary(type="submit") Buat Draf
+          a.btn.btn-light(href="/procurement") Batal

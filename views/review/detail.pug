@@ -1,0 +1,80 @@
+extends ../layout
+
+block content
+  mixin statusBadge(s)
+    - var map = { draft: 'secondary', locked: 'warning', reviewed: 'info', finalized: 'success' }
+    span.badge(class='bg-' + (map[s] || 'secondary'))= s
+  mixin approvalBadge(s)
+    - var map = { pending: 'secondary', approved: 'success', rejected: 'danger' }
+    span.badge(class='bg-' + (map[s] || 'secondary'))= s
+
+  - var total = (items || []).reduce(function(sum, i){ return sum + Number(i.price) * Number(i.quantity); }, 0)
+  - var approvedTotal = (items || []).filter(function(i){ return i.approval_status === 'approved'; }).reduce(function(sum, i){ return sum + Number(i.price) * Number(i.quantity); }, 0)
+
+  .d-flex.justify-content-between.align-items-center.mb-3
+    div
+      h2.mb-1 Review Pengadaan #{draft.year}
+      div.text-muted Pengaju: #{draft.creator_name} &nbsp;|&nbsp; Status: !{''}
+        +statusBadge(draft.status)
+    a.btn.btn-outline-secondary(href="/review") Kembali
+  if success
+    .alert.alert-success= success
+  if draft.status === 'finalized'
+    .alert.alert-success Draf sudah <strong>difinalisasi</strong> oleh #{draft.reviewer_name || 'kaprodi'} — tidak dapat diubah.
+
+  .card.mb-3
+    .card-header Daftar Item
+    .card-body.p-0
+      table.table.align-middle.mb-0
+        thead.table-light
+          tr
+            th Tipe
+            th Nama Barang
+            th.text-end Harga
+            th.text-end Qty
+            th.text-end Subtotal
+            th Keputusan
+            if reviewable
+              th.text-end Aksi
+        tbody
+          if items && items.length
+            each i in items
+              tr
+                td
+                  span.badge(class=(i.product_type === 'bhp' ? 'bg-info' : 'bg-primary'))= i.product_type
+                td
+                  = i.product_name
+                  if i.replaced_label
+                    br
+                    small.text-muted Mengganti: #{i.replaced_label} (#{i.replaced_name})
+                td.text-end Rp #{Number(i.price).toLocaleString('id-ID')}
+                td.text-end= i.quantity
+                td.text-end Rp #{(Number(i.price) * Number(i.quantity)).toLocaleString('id-ID')}
+                td: +approvalBadge(i.approval_status)
+                if reviewable
+                  td.text-end.text-nowrap
+                    form.d-inline(method="POST", action=`/review/${draft.id}/items/${i.id}/decide`)
+                      input(type="hidden" name="decision" value="approved")
+                      button.btn.btn-sm.btn-outline-success.me-1(type="submit", disabled=(i.approval_status === 'approved')) Setuju
+                    form.d-inline(method="POST", action=`/review/${draft.id}/items/${i.id}/decide`)
+                      input(type="hidden" name="decision" value="rejected")
+                      button.btn.btn-sm.btn-outline-danger(type="submit", disabled=(i.approval_status === 'rejected')) Tolak
+          else
+            tr
+              td.text-center.text-muted(colspan=(reviewable ? 7 : 6)) Draf tidak punya item.
+        tfoot.table-light
+          tr
+            th(colspan="4") Total Diajukan
+            th.text-end Rp #{total.toLocaleString('id-ID')}
+            th(colspan=(reviewable ? 2 : 1))
+          tr
+            th(colspan="4") Total Disetujui
+            th.text-end.text-success Rp #{approvedTotal.toLocaleString('id-ID')}
+            th(colspan=(reviewable ? 2 : 1))
+
+  if reviewable
+    .d-flex.align-items-center.gap-3
+      form(method="POST", action=`/review/${draft.id}/finalize`, onsubmit="return confirm('Finalisasi draf? Setelah final tidak bisa diubah lagi.')")
+        button.btn.btn-success(type="submit", disabled=(pendingCount > 0)) Finalisasi Draf
+      if pendingCount > 0
+        span.text-muted #{pendingCount} item belum diputuskan — putuskan semua sebelum finalisasi.

@@ -1,0 +1,52 @@
+extends ../layout
+
+block content
+  - var v = item || {}
+  - var isEdit = !!(item && item.id)
+  - var action = isEdit ? `/procurement/${draft.id}/items/${v.id}/edit` : `/procurement/${draft.id}/items`
+
+  .d-flex.justify-content-between.align-items-center.mb-3
+    h2.mb-0= isEdit ? 'Edit Item' : 'Tambah Item'
+    a.btn.btn-outline-secondary(href=`/procurement/${draft.id}`) Kembali
+  .card
+    .card-body
+      form(method="POST", action=action)
+        .mb-3
+          label.form-label(for="product_type") Tipe Barang
+          select.form-select#product_type(name="product_type", class=(errors && errors.product_type ? 'is-invalid' : ''), required, onchange="document.getElementById('replaceWrap').style.display = this.value === 'inventaris' ? 'block' : 'none'")
+            option(value="inventaris", selected=(v.product_type === 'inventaris')) Inventaris
+            option(value="bhp", selected=(v.product_type === 'bhp')) BHP (Barang Habis Pakai)
+          if errors && errors.product_type
+            .invalid-feedback= errors.product_type
+        .mb-3
+          label.form-label(for="product_name") Nama Barang
+          input.form-control#product_name(type="text" name="product_name", value=v.product_name || '', class=(errors && errors.product_name ? 'is-invalid' : ''), required)
+          if errors && errors.product_name
+            .invalid-feedback= errors.product_name
+        .row
+          .col-md-6.mb-3
+            label.form-label(for="price") Harga (per unit)
+            .input-group
+              span.input-group-text Rp
+              input.form-control#price(type="number" name="price" min="0" step="0.01", value=(v.price != null ? v.price : ''), class=(errors && errors.price ? 'is-invalid' : ''), required)
+              if errors && errors.price
+                .invalid-feedback= errors.price
+          .col-md-6.mb-3
+            label.form-label(for="quantity") Jumlah
+            input.form-control#quantity(type="number" name="quantity" min="1", value=(v.quantity != null ? v.quantity : 1), class=(errors && errors.quantity ? 'is-invalid' : ''), required)
+            if errors && errors.quantity
+              .invalid-feedback= errors.quantity
+        .mb-3
+          label.form-label(for="purchase_link") Link Pembelian
+          input.form-control#purchase_link(type="url" name="purchase_link", value=v.purchase_link || '' placeholder="https://...")
+        #replaceWrap.mb-3(style=(v.product_type === 'bhp' ? 'display:none' : 'display:block'))
+          label.form-label(for="replaces_asset_id") Mengganti Aset (opsional, khusus inventaris)
+          select.form-select#replaces_asset_id(name="replaces_asset_id")
+            option(value="") -- tidak menggantikan --
+            each a in assets
+              option(value=a.id, selected=(String(v.replaces_asset_id) === String(a.id)))= (a.label_code ? a.label_code + ' - ' : '') + a.product_name
+          if !(assets && assets.length)
+            .form-text Belum ada aset inventaris yang bisa digantikan.
+        .d-flex.gap-2
+          button.btn.btn-primary(type="submit")= isEdit ? 'Simpan' : 'Tambah'
+          a.btn.btn-light(href=`/procurement/${draft.id}`) Batal

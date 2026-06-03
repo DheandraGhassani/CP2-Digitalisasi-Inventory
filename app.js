@@ -42,16 +42,20 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const roomRoutes = require('./routes/roomRoutes');
 const roleRoutes = require('./routes/roleRoutes');
+const procurementRoutes = require('./routes/procurementRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 // Use routes
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/rooms', roomRoutes);
 app.use('/roles', roleRoutes);
+app.use('/procurement', procurementRoutes);
+app.use('/review', reviewRoutes);
 
 // Home route
 app.get('/', (req, res) => {
-    if(req.session.user) {
+    if (req.session.user) {
         return res.redirect('/auth/dashboard');
     } else {
         res.render('auth/login');
