@@ -29,7 +29,9 @@ html(lang="id")
                 a.nav-link(href="/review", class=navActive('/review')) Review Pengadaan
             if user.role_name === 'staff_admin'
               li.nav-item
-                a.nav-link(href="/assets", class=navActive('/assets')) Inventaris
+                a.nav-link(href="/assets", class=(cp === '/assets' || cp.indexOf('/assets/items') === 0 ? 'active' : '')) Penerimaan
+              li.nav-item
+                a.nav-link(href="/assets/inventory", class=navActive('/assets/inventory')) Daftar Inventaris
             if user.role_name === 'staff_lab'
               li.nav-item
                 a.nav-link(href="/bhp", class=navActive('/bhp')) Stok BHP

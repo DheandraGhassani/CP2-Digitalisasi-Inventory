@@ -26,8 +26,8 @@ cp .env.example .env      # Windows: copy .env.example .env
 # 5. Import skema -> otomatis membuat database + tabel
 mysql -u root < "sql/schema_capstone2 updated.sql"
 
-# 6. Buat user admin default
-node seed-admin.js
+# 6. Seed user (5 role) + ruangan contoh
+node seed.js
 
 # 7. Jalankan
 npm run dev        # auto-reload (nodemon); atau: npm start
@@ -35,7 +35,7 @@ npm run dev        # auto-reload (nodemon); atau: npm start
 
 Buka <http://localhost:3000>.
 
-**Login default** (dari `seed-admin.js`): `admin@lab.test` / `admin123` — ganti setelah login pertama.
+**Login default** (dari `seed.js`): `admin@lab.test` / `admin123` (admin), `kalab@lab.test` / `kalab123`, `kaprodi@lab.test` / `kaprodi123`, `stafadmin@lab.test` / `staf123`, `staflab@lab.test` / `staf123` — ganti setelah login pertama.
 
 ## Peran (roles)
 

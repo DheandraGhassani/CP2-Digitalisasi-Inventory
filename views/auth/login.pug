@@ -24,7 +24,7 @@ html(lang="id")
                   label.form-label(for="password") Password
                   input.form-control#password(type="password" name="password", required)
                 .form-check.mb-3
-                  input.form-check-input#remember(type="checkbox" name="remember" value="1", checked=(typeof remember !== 'undefined' && !!remember))
+                  input.form-check-input#remember(type="checkbox" name="remember" value="1", checked=(typeof remember === 'undefined' ? true : !!remember))
                   label.form-check-label(for="remember") Ingat saya
                 .d-grid
                   button.btn.btn-primary(type="submit") Login

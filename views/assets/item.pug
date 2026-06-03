@@ -1,0 +1,109 @@
+extends ../layout
+
+block content
+  mixin conditionBadge(c)
+    - var map = { good: 'success', minor_damage: 'warning', major_damage: 'danger', removed: 'secondary', replaced: 'info' }
+    span.badge(class='bg-' + (map[c] || 'secondary'))= c
+
+  .d-flex.justify-content-between.align-items-center.mb-3
+    div
+      h2.mb-1= item.product_name
+      div.text-muted
+        span.badge.me-2(class=(item.product_type === 'bhp' ? 'bg-info' : 'bg-primary'))= item.product_type
+        | Pengadaan #{item.year} &nbsp;|&nbsp; Qty: #{item.quantity} &nbsp;|&nbsp; Diterima: #{received}/#{item.quantity}
+    a.btn.btn-outline-secondary(href="/assets") Kembali
+  if success
+    .alert.alert-info= success
+
+  .row
+    //- Receipts
+    .col-lg-6.mb-3
+      .card.h-100
+        .card-header Penerimaan (bertahap)
+        .card-body
+          if receipts && receipts.length
+            table.table.table-sm.align-middle
+              thead: tr
+                th Tanggal
+                th.text-end Jumlah
+                th Catatan
+              tbody
+                each r in receipts
+                  tr
+                    td= new Date(r.receipt_date).toLocaleDateString('id-ID')
+                    td.text-end= r.total_received
+                    td= r.description || '-'
+          else
+            p.text-muted Belum ada penerimaan.
+          if remaining > 0
+            hr
+            form(method="POST", action=`/assets/items/${item.id}/receipts`)
+              .row.g-2
+                .col-6
+                  label.form-label.small Tanggal Terima
+                  input.form-control.form-control-sm(type="date" name="receipt_date", required)
+                .col-6
+                  label.form-label.small Jumlah (sisa #{remaining})
+                  input.form-control.form-control-sm(type="number" name="total_received" min="1", max=remaining, value="1", required)
+              .mb-2.mt-2
+                input.form-control.form-control-sm(type="text" name="description" placeholder="Catatan (opsional)")
+              button.btn.btn-sm.btn-primary(type="submit") + Catat Penerimaan
+          else
+            .alert.alert-success.mb-0.mt-2.py-2 Semua barang sudah diterima.
+
+    //- Assets (inventaris only) / BHP note
+    .col-lg-6.mb-3
+      .card.h-100
+        .card-header= item.product_type === 'inventaris' ? 'Aset Inventaris (label + QR)' : 'BHP'
+        .card-body
+          if item.product_type === 'inventaris'
+            if assets && assets.length
+              table.table.table-sm.align-middle
+                thead: tr
+                  th Label
+                  th Ruangan
+                  th Kondisi
+                  th QR
+                tbody
+                  each a in assets
+                    tr
+                      td: span.badge.bg-dark= a.label_code
+                      td= a.room_code || '-'
+                      td: +conditionBadge(a.condition)
+                      td
+                        if a.qr_code_path
+                          a(href=a.qr_code_path, target="_blank" rel="noopener") lihat
+                        else
+                          span.text-muted -
+            else
+              p.text-muted Belum ada aset dibuat.
+            if assets.length < received
+              hr
+              form(method="POST", action=`/assets/items/${item.id}/assets`, enctype="multipart/form-data")
+                .mb-2
+                  label.form-label.small Kode Label
+                  input.form-control.form-control-sm(type="text" name="label_code" placeholder="mis. INV-2026-001", required)
+                .row.g-2
+                  .col-6
+                    label.form-label.small Ruangan
+                    select.form-select.form-select-sm(name="rooms_id", required)
+                      option(value="") -- pilih --
+                      each r in rooms
+                        option(value=r.id)= r.room_code + ' - ' + r.room_name
+                  .col-6
+                    label.form-label.small Kondisi
+                    select.form-select.form-select-sm(name="condition")
+                      each c in conditions
+                        option(value=c, selected=(c === 'good'))= c
+                .row.g-2.mt-1
+                  .col-6
+                    label.form-label.small Tgl Perolehan
+                    input.form-control.form-control-sm(type="date" name="date_acquired")
+                  .col-6
+                    label.form-label.small Foto QR/Barcode
+                    input.form-control.form-control-sm(type="file" name="qr_code" accept="image/*")
+                button.btn.btn-sm.btn-primary.mt-2(type="submit") + Buat Aset
+            else
+              .alert.alert-success.mb-0.mt-2.py-2 Semua barang diterima sudah dibuatkan aset.
+          else
+            p.text-muted BHP — penerimaan dicatat di sini. Pengelolaan stok BHP dilakukan oleh Staf Lab.

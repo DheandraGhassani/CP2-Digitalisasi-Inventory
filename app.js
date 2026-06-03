@@ -44,6 +44,7 @@ const roomRoutes = require('./routes/roomRoutes');
 const roleRoutes = require('./routes/roleRoutes');
 const procurementRoutes = require('./routes/procurementRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const assetRoutes = require('./routes/assetRoutes');
 
 // Use routes
 app.use('/auth', authRoutes);
@@ -52,6 +53,7 @@ app.use('/rooms', roomRoutes);
 app.use('/roles', roleRoutes);
 app.use('/procurement', procurementRoutes);
 app.use('/review', reviewRoutes);
+app.use('/assets', assetRoutes);
 
 // Home route
 app.get('/', (req, res) => {

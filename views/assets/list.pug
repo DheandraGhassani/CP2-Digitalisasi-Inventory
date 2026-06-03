@@ -1,0 +1,36 @@
+extends ../layout
+
+block content
+  h2.mb-3 Penerimaan Barang
+  p.text-muted Item pengadaan yang disetujui kaprodi & sudah difinalisasi.
+  if success
+    .alert.alert-info= success
+  .card
+    .card-body.p-0
+      table.table.table-hover.align-middle.mb-0
+        thead.table-light
+          tr
+            th Tahun
+            th Tipe
+            th Nama Barang
+            th.text-end Qty
+            th.text-end Diterima
+            th.text-end Aset Dibuat
+            th.text-end Aksi
+        tbody
+          if items && items.length
+            each i in items
+              tr
+                td= i.year
+                td
+                  span.badge(class=(i.product_type === 'bhp' ? 'bg-info' : 'bg-primary'))= i.product_type
+                td= i.product_name
+                td.text-end= i.quantity
+                td.text-end
+                  span.badge(class=(Number(i.received_qty) >= i.quantity ? 'bg-success' : 'bg-warning'))= i.received_qty + '/' + i.quantity
+                td.text-end= i.product_type === 'inventaris' ? i.asset_count : '-'
+                td.text-end
+                  a.btn.btn-sm.btn-outline-primary(href=`/assets/items/${i.id}`) Proses
+          else
+            tr
+              td.text-center.text-muted(colspan="7") Belum ada item siap diterima.

@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  mixin conditionBadge(c)
+    - var map = { good: 'success', minor_damage: 'warning', major_damage: 'danger', removed: 'secondary', replaced: 'info' }
+    span.badge(class='bg-' + (map[c] || 'secondary'))= c
+
+  h2.mb-3 Daftar Inventaris
+  if success
+    .alert.alert-success= success
+  .card
+    .card-body.p-0
+      table.table.table-hover.align-middle.mb-0
+        thead.table-light
+          tr
+            th Label
+            th Nama Barang
+            th Ruangan
+            th Kondisi
+            th Tgl Perolehan
+            th QR/Barcode
+        tbody
+          if assets && assets.length
+            each a in assets
+              tr
+                td
+                  span.badge.bg-dark= a.label_code || '-'
+                td= a.product_name
+                td= a.room_code ? `${a.room_code} - ${a.room_name}` : '-'
+                td: +conditionBadge(a.condition)
+                td= a.date_acquired ? new Date(a.date_acquired).toLocaleDateString('id-ID') : '-'
+                td
+                  if a.qr_code_path
+                    a(href=a.qr_code_path, target="_blank" rel="noopener")
+                      img(src=a.qr_code_path, alt="QR" style="height:40px;width:40px;object-fit:cover;border-radius:6px")
+                  else
+                    span.text-muted -
+          else
+            tr
+              td.text-center.text-muted(colspan="6") Belum ada aset inventaris.

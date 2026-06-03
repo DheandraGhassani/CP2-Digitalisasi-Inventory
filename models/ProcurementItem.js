@@ -52,6 +52,30 @@ class ProcurementItem {
         await db.query('UPDATE procurement_items SET approval_status = ? WHERE id = ?', [status, id]);
         return true;
     }
+
+    // Approved items from finalized drafts — the staff_admin receiving queue
+    static async getApprovedForReceiving() {
+        return db.query(`
+            SELECT i.*, d.year, d.id AS draft_id,
+                (SELECT COALESCE(SUM(total_received), 0) FROM receipt WHERE procurement_items_id = i.id) AS received_qty,
+                (SELECT COUNT(*) FROM inventory_assets WHERE procurement_items_id = i.id) AS asset_count
+            FROM procurement_items i
+            JOIN procurement_drafts d ON i.procurement_drafts_id = d.id
+            WHERE d.status = 'finalized' AND i.approval_status = 'approved'
+            ORDER BY d.year DESC, i.id
+        `);
+    }
+
+    // Item + its draft context (status/year)
+    static async findWithContext(id) {
+        const rows = await db.query(`
+            SELECT i.*, d.status AS draft_status, d.year
+            FROM procurement_items i
+            JOIN procurement_drafts d ON i.procurement_drafts_id = d.id
+            WHERE i.id = ?
+        `, [id]);
+        return rows[0] || null;
+    }
 }
 
 module.exports = ProcurementItem;
