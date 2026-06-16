@@ -10,7 +10,9 @@ block content
   .d-flex.justify-content-between.align-items-center.mb-3
     div
       h2.mb-1 Draf Pengadaan #{draft.year}
-      div Status: +statusBadge(draft.status)
+      div
+      | Status: 
+      +statusBadge(draft.status)
     a.btn.btn-outline-secondary(href="/procurement") Kembali
   if success
     .alert.alert-success= success
