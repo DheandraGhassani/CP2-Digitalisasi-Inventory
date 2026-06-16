@@ -1,0 +1,71 @@
+extends ../layout
+
+block content
+  - var isEdit = !!(stock && stock.id)
+  - var v = stock || {}
+  - var action = isEdit ? `/bhp/${v.id}/edit` : '/bhp'
+
+  .d-flex.justify-content-between.align-items-center.mb-3
+    h2.mb-0= isEdit ? 'Edit BHP' : 'Tambah BHP'
+    a.btn.btn-outline-secondary(href=(isEdit ? `/bhp/${v.id}` : '/bhp')) Kembali
+
+  .card
+    .card-body
+      if errors && errors.general
+        .alert.alert-danger= errors.general
+      form(method="POST", action=action)
+        .mb-3
+          label.form-label(for="product_name") Nama BHP
+          input.form-control#product_name(
+            type="text", name="product_name",
+            value=(v.product_name || ''), required,
+            class=(errors && errors.product_name ? 'is-invalid' : ''))
+          if errors && errors.product_name
+            .invalid-feedback= errors.product_name
+
+        .row
+          .col-md-6.mb-3
+            label.form-label(for="unit") Satuan
+            input.form-control#unit(
+              type="text", name="unit",
+              value=(v.unit || ''), placeholder="pcs, botol, liter...", required,
+              class=(errors && errors.unit ? 'is-invalid' : ''))
+            if errors && errors.unit
+              .invalid-feedback= errors.unit
+          .col-md-6.mb-3
+            label.form-label(for="unit_price") Harga Satuan (opsional)
+            .input-group
+              span.input-group-text Rp
+              input.form-control#unit_price(
+                type="number", name="unit_price",
+                min="0", step="0.01",
+                value=(v.unit_price != null ? v.unit_price : ''))
+
+        .row
+          if !isEdit
+            .col-md-6.mb-3
+              label.form-label(for="current_stock") Stok Awal
+              input.form-control#current_stock(
+                type="number", name="current_stock", min="0",
+                value=(v.current_stock || 0))
+          .col-md-6.mb-3
+            label.form-label(for="minimum_stock") Stok Minimum (alert)
+            input.form-control#minimum_stock(
+              type="number", name="minimum_stock", min="0",
+              value=(v.minimum_stock || 0))
+
+        .mb-3
+          label.form-label(for="rooms_id") Ruangan
+          select.form-select#rooms_id(
+            name="rooms_id", required,
+            class=(errors && errors.rooms_id ? 'is-invalid' : ''))
+            option(value="") -- Pilih Ruangan --
+            each r in rooms
+              option(value=r.id, selected=(String(v.rooms_id) === String(r.id)))
+                = r.room_name + ' (' + r.room_code + ')'
+          if errors && errors.rooms_id
+            .invalid-feedback= errors.rooms_id
+
+        .d-flex.gap-2.mt-3
+          button.btn.btn-primary(type="submit")= isEdit ? 'Simpan' : 'Tambah'
+          a.btn.btn-light(href=(isEdit ? `/bhp/${v.id}` : '/bhp')) Batal

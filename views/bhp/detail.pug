@@ -1,0 +1,82 @@
+extends ../layout
+
+block content
+  - var isLab = user.role_name === 'staff_lab'
+
+  .d-flex.justify-content-between.align-items-center.mb-3
+    h2.mb-0= stock.product_name
+    .d-flex.gap-2
+      if isLab
+        a.btn.btn-outline-secondary(href=`/bhp/${stock.id}/edit`) Edit
+        form.d-inline(method="POST", action=`/bhp/${stock.id}/delete`,
+          onsubmit="return confirm('Hapus BHP ini? Tidak bisa dibatalkan.')")
+          button.btn.btn-outline-danger(type="submit") Hapus
+      a.btn.btn-outline-secondary(href="/bhp") Kembali
+
+  if success
+    .alert.alert-info= success
+
+  .row.mb-4
+    .col-md-5
+      .card
+        .card-body
+          h6.card-title.text-muted Informasi BHP
+          table.table.table-sm.mb-0
+            tr
+              th(style="width:40%") Satuan
+              td= stock.unit
+            tr
+              th Ruangan
+              td= stock.room_name || '-'
+            tr
+              th Harga Satuan
+              td= stock.unit_price ? 'Rp ' + Number(stock.unit_price).toLocaleString('id-ID') : '-'
+            tr
+              th Stok Minimum
+              td= stock.minimum_stock + ' ' + stock.unit
+            tr
+              th Stok Saat Ini
+              td
+                - var isLow = stock.current_stock <= stock.minimum_stock
+                span.fw-bold(class=(isLow ? 'text-danger' : 'text-success'))
+                  = stock.current_stock + ' ' + stock.unit
+                if isLow
+                  span.badge.bg-danger.ms-2 Stok Rendah
+
+  if isLab
+    .card.mb-4
+      .card-header.fw-semibold Tambah Stok Masuk
+      .card-body
+        form.row.g-2(method="POST", action=`/bhp/${stock.id}/stock-in`)
+          .col-md-3
+            input.form-control(type="number", name="qty", placeholder="Jumlah", min="1", required)
+          .col-md-6
+            input.form-control(type="text", name="description", placeholder="Keterangan (opsional)")
+          .col-auto
+            button.btn.btn-success(type="submit") + Tambah Stok
+
+  .card
+    .card-header.fw-semibold Riwayat Stok
+    .card-body.p-0
+      table.table.table-sm.align-middle.mb-0
+        thead.table-light
+          tr
+            th Tanggal
+            th Status
+            th.text-end Jumlah
+            th Keterangan
+            th Oleh
+        tbody
+          if logs && logs.length
+            each l in logs
+              tr
+                td= new Date(l.created_at).toLocaleDateString('id-ID')
+                td
+                  span.badge(class=(l.status === 'in' ? 'bg-success' : 'bg-danger'))
+                    = l.status === 'in' ? 'Masuk' : 'Keluar'
+                td.text-end= l.total
+                td= l.description
+                td= l.user_name
+          else
+            tr
+              td.text-center.text-muted(colspan="5") Belum ada riwayat stok.

@@ -1,0 +1,49 @@
+extends ../layout
+
+block content
+  - var isLab = user.role_name === 'staff_lab'
+  .d-flex.justify-content-between.align-items-center.mb-3
+    h2.mb-0 Stok BHP
+    if isLab
+      a.btn.btn-primary(href="/bhp/new") + Tambah BHP
+
+  if success
+    .alert.alert-info= success
+
+  .card
+    .card-body.p-0
+      table.table.table-hover.align-middle.mb-0
+        thead.table-light
+          tr
+            th Nama BHP
+            th Satuan
+            th Ruangan
+            th.text-end Stok Min
+            th.text-end Stok Saat Ini
+            th Status
+            th Aksi
+        tbody
+          if stocks && stocks.length
+            each s in stocks
+              - var isLow = s.current_stock <= s.minimum_stock
+              tr
+                td
+                  a(href=`/bhp/${s.id}`)= s.product_name
+                td= s.unit
+                td= s.room_name || '-'
+                td.text-end= s.minimum_stock
+                td.text-end
+                  span.fw-bold(class=(isLow ? 'text-danger' : 'text-success'))= s.current_stock
+                td
+                  if isLow
+                    span.badge.bg-danger Stok Rendah
+                  else
+                    span.badge.bg-success Aman
+                td
+                  a.btn.btn-sm.btn-outline-primary(href=`/bhp/${s.id}`) Detail
+                  if isLab
+                    |
+                    a.btn.btn-sm.btn-outline-secondary(href=`/bhp/${s.id}/edit`) Edit
+          else
+            tr
+              td.text-center.text-muted(colspan="7") Belum ada data BHP.

@@ -45,6 +45,8 @@ const roleRoutes = require('./routes/roleRoutes');
 const procurementRoutes = require('./routes/procurementRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const assetRoutes = require('./routes/assetRoutes');
+const bhpRoutes = require('./routes/bhpRoutes');
+const maintenanceRoutes = require('./routes/maintenanceRoutes');
 
 // Use routes
 app.use('/auth', authRoutes);
@@ -54,6 +56,8 @@ app.use('/roles', roleRoutes);
 app.use('/procurement', procurementRoutes);
 app.use('/review', reviewRoutes);
 app.use('/assets', assetRoutes);
+app.use('/bhp', bhpRoutes);
+app.use('/maintenance', maintenanceRoutes);
 
 // Home route
 app.get('/', (req, res) => {
