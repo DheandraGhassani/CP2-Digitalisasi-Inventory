@@ -1,0 +1,46 @@
+extends ../layout
+
+block content
+  - function condLabel(c) { var m={good:'Baik',minor_damage:'Rusak Ringan',major_damage:'Rusak Berat',removed:'Dihapus',replaced:'Diganti'}; return m[c]||c; }
+  - function condClass(c) { var m={good:'success',minor_damage:'warning',major_damage:'danger',removed:'dark',replaced:'secondary'}; return 'bg-'+(m[c]||'secondary'); }
+
+  .d-flex.justify-content-between.align-items-center.mb-3
+    h2.mb-0 Log Maintenance
+    a.btn.btn-primary(href="/maintenance/new") + Tambah Log
+
+  if success
+    .alert.alert-info= success
+
+  .card
+    .card-body.p-0
+      table.table.table-hover.align-middle.mb-0
+        thead.table-light
+          tr
+            th Tanggal
+            th Aset
+            th Label
+            th Kondisi Sebelum
+            th Kondisi Sesudah
+            th Teknisi
+            th Aksi
+        tbody
+          if logs && logs.length
+            each l in logs
+              tr
+                td= new Date(l.maintenance_date).toLocaleDateString('id-ID')
+                td= l.asset_name
+                td
+                  if l.label_code
+                    span.badge.bg-secondary= l.label_code
+                  else
+                    span.text-muted -
+                td
+                  span.badge(class=condClass(l.condition_before))= condLabel(l.condition_before)
+                td
+                  span.badge(class=condClass(l.condition_after))= condLabel(l.condition_after)
+                td= l.technician_name
+                td
+                  a.btn.btn-sm.btn-outline-primary(href=`/maintenance/${l.id}`) Detail
+          else
+            tr
+              td.text-center.text-muted(colspan="7") Belum ada log maintenance.

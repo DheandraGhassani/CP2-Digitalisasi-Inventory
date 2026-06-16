@@ -1,0 +1,69 @@
+extends ../layout
+
+block content
+  - function condLabel(c) { var m={good:'Baik',minor_damage:'Rusak Ringan',major_damage:'Rusak Berat',removed:'Dihapus',replaced:'Diganti'}; return m[c]||c; }
+  - function condClass(c) { var m={good:'success',minor_damage:'warning',major_damage:'danger',removed:'dark',replaced:'secondary'}; return 'bg-'+(m[c]||'secondary'); }
+
+  .d-flex.justify-content-between.align-items-center.mb-3
+    h2.mb-0= title
+    a.btn.btn-outline-secondary(href="/maintenance") Kembali
+
+  if success
+    .alert.alert-info= success
+
+  .row.mb-4
+    .col-md-6
+      .card
+        .card-body
+          h6.card-title.text-muted Detail Maintenance
+          table.table.table-sm.mb-0
+            tr
+              th(style="width:40%") Tanggal
+              td= new Date(log.maintenance_date).toLocaleDateString('id-ID')
+            tr
+              th Aset
+              td= log.asset_name
+            tr
+              th Label
+              td
+                if log.label_code
+                  span.badge.bg-dark= log.label_code
+                else
+                  | -
+            tr
+              th Ruangan
+              td= log.room_name
+            tr
+              th Kondisi Sebelum
+              td
+                span.badge(class=condClass(log.condition_before))= condLabel(log.condition_before)
+            tr
+              th Kondisi Sesudah
+              td
+                span.badge(class=condClass(log.condition_after))= condLabel(log.condition_after)
+            tr
+              th Teknisi
+              td= log.technician_name
+            tr
+              th Deskripsi
+              td= log.description
+
+  .card
+    .card-header.fw-semibold BHP yang Digunakan
+    .card-body.p-0
+      table.table.table-sm.align-middle.mb-0
+        thead.table-light
+          tr
+            th Nama BHP
+            th Satuan
+            th.text-end Jumlah Digunakan
+        tbody
+          if bhpUsages && bhpUsages.length
+            each u in bhpUsages
+              tr
+                td= u.product_name
+                td= u.unit
+                td.text-end= u.total_used
+          else
+            tr
+              td.text-center.text-muted(colspan="3") Tidak ada BHP yang digunakan.

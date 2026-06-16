@@ -1,0 +1,104 @@
+extends ../layout
+
+block content
+  - var COND_LABELS = {good:'Baik',minor_damage:'Rusak Ringan',major_damage:'Rusak Berat',removed:'Dihapus',replaced:'Diganti'}
+
+  .d-flex.justify-content-between.align-items-center.mb-3
+    h2.mb-0 Tambah Log Maintenance
+    a.btn.btn-outline-secondary(href="/maintenance") Kembali
+
+  .card
+    .card-body
+      if errors && errors.general
+        .alert.alert-danger= errors.general
+
+      form(method="POST" action="/maintenance")
+        .mb-3
+          label.form-label Tanggal Maintenance
+          input.form-control(
+            type="date", name="maintenance_date",
+            value=(formData && formData.maintenance_date || ''), required,
+            class=(errors && errors.maintenance_date ? 'is-invalid' : ''))
+          if errors && errors.maintenance_date
+            .invalid-feedback= errors.maintenance_date
+
+        .mb-3
+          label.form-label Aset yang Dimaintenance
+          select.form-select(
+            name="inventory_assets_id", required,
+            class=(errors && errors.inventory_assets_id ? 'is-invalid' : ''))
+            option(value="") -- Pilih Aset --
+            each a in assets
+              option(
+                value=a.id,
+                selected=(formData && String(formData.inventory_assets_id) === String(a.id)))
+                = (a.label_code ? '[' + a.label_code + '] ' : '') + a.product_name + ' (' + (a.room_name || '-') + ')'
+          if errors && errors.inventory_assets_id
+            .invalid-feedback= errors.inventory_assets_id
+
+        .row
+          .col-md-6.mb-3
+            label.form-label Kondisi Sebelum
+            select.form-select(
+              name="condition_before", required,
+              class=(errors && errors.condition_before ? 'is-invalid' : ''))
+              option(value="") -- Pilih --
+              each c in conditions
+                option(value=c, selected=(formData && formData.condition_before === c))= COND_LABELS[c] || c
+            if errors && errors.condition_before
+              .invalid-feedback= errors.condition_before
+          .col-md-6.mb-3
+            label.form-label Kondisi Sesudah
+            select.form-select(
+              name="condition_after", required,
+              class=(errors && errors.condition_after ? 'is-invalid' : ''))
+              option(value="") -- Pilih --
+              each c in conditions
+                option(value=c, selected=(formData && formData.condition_after === c))= COND_LABELS[c] || c
+            if errors && errors.condition_after
+              .invalid-feedback= errors.condition_after
+
+        .mb-3
+          label.form-label Deskripsi Pekerjaan
+          textarea.form-control(
+            name="description", rows="3", required,
+            class=(errors && errors.description ? 'is-invalid' : ''))= formData && formData.description || ''
+          if errors && errors.description
+            .invalid-feedback= errors.description
+
+        hr
+        h5.mb-2 BHP yang Digunakan
+        p.text-muted.small Opsional. Stok akan berkurang otomatis setelah disimpan.
+
+        #bhpRows
+
+        button.btn.btn-outline-secondary.btn-sm.mb-3(type="button" onclick="addBhpRow()") + Tambah BHP
+
+        .d-flex.gap-2.mt-2
+          button.btn.btn-primary(type="submit") Simpan Log
+          a.btn.btn-light(href="/maintenance") Batal
+
+  - var bhpJson = JSON.stringify(bhpStocks.map(function(b) { return { id: b.id, label: b.product_name + ' (' + b.unit + ', stok: ' + b.current_stock + ') – ' + (b.room_name||'-') }; }))
+  script.
+    var bhpOptions = !{bhpJson};
+    var rowIdx = 0;
+    function addBhpRow() {
+      var opts = '<option value="">-- Pilih BHP --</option>' +
+        bhpOptions.map(function(b) {
+          return '<option value="' + b.id + '">' + b.label + '</option>';
+        }).join('');
+      var html =
+        '<div class="row g-2 align-items-center mb-2 bhp-row" id="bhprow' + rowIdx + '">' +
+          '<div class="col-md-7">' +
+            '<select class="form-select form-select-sm" name="bhp_stocks_id">' + opts + '</select>' +
+          '</div>' +
+          '<div class="col-md-3">' +
+            '<input class="form-control form-control-sm" type="number" name="bhp_qty" min="1" placeholder="Jumlah" required>' +
+          '</div>' +
+          '<div class="col-auto">' +
+            '<button type="button" class="btn btn-sm btn-outline-danger" onclick="document.getElementById(\'bhprow' + rowIdx + '\').remove()">×</button>' +
+          '</div>' +
+        '</div>';
+      document.getElementById('bhpRows').insertAdjacentHTML('beforeend', html);
+      rowIdx++;
+    }
