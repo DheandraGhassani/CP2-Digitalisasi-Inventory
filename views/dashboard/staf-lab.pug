@@ -1,6 +1,45 @@
 extends ../layout
 
 block content
-  h2.mb-3= title || 'Staf Laboratorium Dashboard'
-  p Selamat datang, #{user.name}.
-  .alert.alert-info Dashboard ini masih dalam pengembangan.
+  h2.mb-4= title || 'Dashboard Staf Laboratorium'
+  p.text-muted Selamat datang, #{user.name}.
+
+  .row.g-3.mb-4
+    .col-md-4
+      .card.text-bg-danger.text-white.h-100
+        .card-body
+          h6.card-title Stok BHP Rendah
+          p.card-text.display-6.fw-bold= stats.low_stock || 0
+          p.card-text.small Item di bawah stok minimum
+    .col-md-4
+      .card.text-bg-info.text-white.h-100
+        .card-body
+          h6.card-title Maintenance (30 hari)
+          p.card-text.display-6.fw-bold= stats.recent_maintenance || 0
+          p.card-text.small Log maintenance bulan ini
+    .col-md-4
+      .card.text-bg-warning.h-100
+        .card-body
+          h6.card-title Aset Bermasalah
+          p.card-text.display-6.fw-bold= stats.damaged_assets || 0
+          p.card-text.small Kondisi selain "Baik"
+
+  .row.g-3
+    .col-md-4
+      .card.h-100
+        .card-body
+          h6.card-title Stok BHP
+          p.card-text.text-muted Kelola stok barang habis pakai, tambah & pantau persediaan
+          a.btn.btn-outline-primary.btn-sm(href="/bhp") Kelola BHP
+    .col-md-4
+      .card.h-100
+        .card-body
+          h6.card-title Log Maintenance
+          p.card-text.text-muted Catat kegiatan maintenance & kondisi aset
+          a.btn.btn-outline-primary.btn-sm(href="/maintenance") Log Maintenance
+    .col-md-4
+      .card.h-100
+        .card-body
+          h6.card-title Daftar Inventaris
+          p.card-text.text-muted Lihat semua aset inventaris laboratorium
+          a.btn.btn-outline-primary.btn-sm(href="/assets/inventory") Lihat Inventaris

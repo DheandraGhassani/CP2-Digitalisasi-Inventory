@@ -24,9 +24,17 @@ html(lang="id")
             if user.role_name === 'kalab'
               li.nav-item
                 a.nav-link(href="/procurement", class=navActive('/procurement')) Pengadaan
+              li.nav-item
+                a.nav-link(href="/assets/inventory", class=navActive('/assets/inventory')) Inventaris
+              li.nav-item
+                a.nav-link(href="/bhp", class=navActive('/bhp')) Stok BHP
             if user.role_name === 'kaprodi'
               li.nav-item
                 a.nav-link(href="/review", class=navActive('/review')) Review Pengadaan
+              li.nav-item
+                a.nav-link(href="/assets/inventory", class=navActive('/assets/inventory')) Inventaris
+              li.nav-item
+                a.nav-link(href="/bhp", class=navActive('/bhp')) Stok BHP
             if user.role_name === 'staff_admin'
               li.nav-item
                 a.nav-link(href="/assets", class=(cp === '/assets' || cp.indexOf('/assets/items') === 0 ? 'active' : '')) Penerimaan
@@ -37,6 +45,8 @@ html(lang="id")
                 a.nav-link(href="/bhp", class=navActive('/bhp')) Stok BHP
               li.nav-item
                 a.nav-link(href="/maintenance", class=navActive('/maintenance')) Maintenance
+              li.nav-item
+                a.nav-link(href="/assets/inventory", class=navActive('/assets/inventory')) Inventaris
           ul.navbar-nav.ms-auto.align-items-center
             li.nav-item
               span.navbar-text.text-light.me-3 #{user.name} (#{user.role_name})

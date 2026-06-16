@@ -1,6 +1,45 @@
 extends ../layout
 
 block content
-  h2.mb-3= title || 'Kepala Laboratorium Dashboard'
-  p Selamat datang, #{user.name}.
-  .alert.alert-info Dashboard ini masih dalam pengembangan.
+  h2.mb-4= title || 'Dashboard Kepala Laboratorium'
+  p.text-muted Selamat datang, #{user.name}.
+
+  .row.g-3.mb-4
+    .col-md-4
+      .card.text-bg-warning.h-100
+        .card-body
+          h6.card-title Draf Aktif
+          p.card-text.display-6.fw-bold= stats.pending_drafts || 0
+          p.card-text.small Belum difinalisasi
+    .col-md-4
+      .card.text-bg-success.text-white.h-100
+        .card-body
+          h6.card-title Draf Difinalisasi
+          p.card-text.display-6.fw-bold= stats.finalized_drafts || 0
+          p.card-text.small Total draf selesai
+    .col-md-4
+      .card.text-bg-primary.text-white.h-100
+        .card-body
+          h6.card-title Aset Baru (30 hari)
+          p.card-text.display-6.fw-bold= stats.new_assets || 0
+          p.card-text.small Inventaris diterima
+
+  .row.g-3
+    .col-md-4
+      .card.h-100
+        .card-body
+          h6.card-title Pengadaan Barang
+          p.card-text.text-muted Buat & kelola draf pengadaan tahunan
+          a.btn.btn-outline-primary.btn-sm(href="/procurement") Lihat Pengadaan
+    .col-md-4
+      .card.h-100
+        .card-body
+          h6.card-title Daftar Inventaris
+          p.card-text.text-muted Lihat semua aset inventaris laboratorium
+          a.btn.btn-outline-primary.btn-sm(href="/assets/inventory") Lihat Inventaris
+    .col-md-4
+      .card.h-100
+        .card-body
+          h6.card-title Stok BHP
+          p.card-text.text-muted Pantau ketersediaan barang habis pakai
+          a.btn.btn-outline-primary.btn-sm(href="/bhp") Lihat BHP

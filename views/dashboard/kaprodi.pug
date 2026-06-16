@@ -1,6 +1,45 @@
 extends ../layout
 
 block content
-  h2.mb-3= title || 'Ketua Program Studi Dashboard'
-  p Selamat datang, #{user.name}.
-  .alert.alert-info Dashboard ini masih dalam pengembangan.
+  h2.mb-4= title || 'Dashboard Ketua Program Studi'
+  p.text-muted Selamat datang, #{user.name}.
+
+  .row.g-3.mb-4
+    .col-md-4
+      .card.text-bg-danger.text-white.h-100
+        .card-body
+          h6.card-title Menunggu Review
+          p.card-text.display-6.fw-bold= stats.pending_review || 0
+          p.card-text.small Draf menunggu persetujuan
+    .col-md-4
+      .card.text-bg-warning.h-100
+        .card-body
+          h6.card-title Sudah Direview
+          p.card-text.display-6.fw-bold= stats.reviewed || 0
+          p.card-text.small Disetujui/ditolak per item
+    .col-md-4
+      .card.text-bg-success.text-white.h-100
+        .card-body
+          h6.card-title Difinalisasi
+          p.card-text.display-6.fw-bold= stats.finalized || 0
+          p.card-text.small Draf selesai & terkunci
+
+  .row.g-3
+    .col-md-4
+      .card.h-100
+        .card-body
+          h6.card-title Review Pengadaan
+          p.card-text.text-muted Setujui atau tolak item pengadaan dari kalab
+          a.btn.btn-outline-primary.btn-sm(href="/review") Lihat Review
+    .col-md-4
+      .card.h-100
+        .card-body
+          h6.card-title Daftar Inventaris
+          p.card-text.text-muted Lihat semua aset inventaris laboratorium
+          a.btn.btn-outline-primary.btn-sm(href="/assets/inventory") Lihat Inventaris
+    .col-md-4
+      .card.h-100
+        .card-body
+          h6.card-title Stok BHP
+          p.card-text.text-muted Pantau ketersediaan barang habis pakai
+          a.btn.btn-outline-primary.btn-sm(href="/bhp") Lihat BHP

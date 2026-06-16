@@ -1,6 +1,39 @@
 extends ../layout
 
 block content
-  h2.mb-3= title || 'Staf Administrasi Dashboard'
-  p Selamat datang, #{user.name}.
-  .alert.alert-info Dashboard ini masih dalam pengembangan.
+  h2.mb-4= title || 'Dashboard Staf Administrasi'
+  p.text-muted Selamat datang, #{user.name}.
+
+  .row.g-3.mb-4
+    .col-md-4
+      .card.text-bg-warning.h-100
+        .card-body
+          h6.card-title Menunggu Penerimaan
+          p.card-text.display-6.fw-bold= stats.pending_receipt || 0
+          p.card-text.small Item belum diterima
+    .col-md-4
+      .card.text-bg-danger.text-white.h-100
+        .card-body
+          h6.card-title Perlu Labeling
+          p.card-text.display-6.fw-bold= stats.pending_labeling || 0
+          p.card-text.small Aset belum berlabel
+    .col-md-4
+      .card.text-bg-success.text-white.h-100
+        .card-body
+          h6.card-title Penerimaan (30 hari)
+          p.card-text.display-6.fw-bold= stats.recent_receipts || 0
+          p.card-text.small Batch penerimaan bulan ini
+
+  .row.g-3
+    .col-md-6
+      .card.h-100
+        .card-body
+          h6.card-title Penerimaan Barang
+          p.card-text.text-muted Input tanggal penerimaan & proses aset baru dari draf yang disetujui
+          a.btn.btn-outline-primary.btn-sm(href="/assets") Lihat Antrian
+    .col-md-6
+      .card.h-100
+        .card-body
+          h6.card-title Daftar Inventaris
+          p.card-text.text-muted Lihat seluruh aset inventaris yang sudah didaftarkan
+          a.btn.btn-outline-primary.btn-sm(href="/assets/inventory") Lihat Inventaris
